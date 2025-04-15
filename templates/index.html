@@ -1,68 +1,268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenAI and Web3</title>
+    <title>区块链智能合约体验平台</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a2a3a 100%);
+            color: var(--light-color);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
+            overflow: hidden;
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
+
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
         }
+
+        .chain {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(10px) translateX(-15px);
+            }
+
+            75% {
+                transform: translateY(-15px) translateX(-8px);
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
         h3 {
-            color: #409EFF; /* Element UI primary color */
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .el-form-item__label {
+            color: white !important;
+            font-size: 1.1rem !important;
+        }
+
+        .el-input__inner {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border: none !important;
+            color: white !important;
+            height: 50px !important;
+            border-radius: 10px !important;
+        }
+
+        .el-input__inner::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .el-button--primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+            border: none !important;
+            height: 50px !important;
+            font-size: 1.1rem !important;
+            width: 100% !important;
+            border-radius: 10px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .el-button--primary:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .blockchain-features {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
         }
     </style>
 </head>
+
 <body>
+    <div class="background-animation" id="chainAnimation"></div>
+
     <div id="app" class="container">
-        <h3>My First GenAI and Web3 application</h3>
+        <div class="logo">
+            <i class="fas fa-link"></i>
+        </div>
+        <h3>欢迎使用智能合约体验Web端Demo</h3>
+        <p class="subtitle">体验区块链技术与AI融合的全新应用</p>
 
         <el-form :model="form" @submit.native.prevent="handleSubmit">
-            <el-form-item label="My name is Mingce Gao, may I know your name?">
-                <el-input v-model="form.name" placeholder="Enter your name"></el-input>
+            <el-form-item label="请输入您的名字">
+                <el-input v-model="form.name" placeholder="您的名字" prefix-icon="el-icon-user"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="handleSubmit">Enter</el-button>
+                <el-button type="primary" @click="handleSubmit" :loading="loading">
+                    <i class="fas fa-arrow-right"></i> 进入应用
+                </el-button>
             </el-form-item>
         </el-form>
+
+        <div class="blockchain-features">
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>安全可靠</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-project-diagram"></i>
+                <span>去中心化</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-robot"></i>
+                <span>AI驱动</span>
+            </div>
+        </div>
     </div>
 
     <script>
+        // 创建背景动画
+        function createChainElements() {
+            const container = document.getElementById('chainAnimation');
+            const count = 15;
+
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 80 + 20;
+                const chain = document.createElement('div');
+                chain.classList.add('chain');
+                chain.style.width = `${size}px`;
+                chain.style.height = `${size}px`;
+                chain.style.left = `${Math.random() * 100}%`;
+                chain.style.top = `${Math.random() * 100}%`;
+                chain.style.animationDelay = `${Math.random() * 5}s`;
+                chain.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                container.appendChild(chain);
+            }
+        }
+
+        // 初始化Vue应用
         new Vue({
             el: '#app',
             data() {
                 return {
                     form: {
                         name: ''
-                    }
+                    },
+                    loading: false
                 };
+            },
+            mounted() {
+                createChainElements();
             },
             methods: {
                 handleSubmit() {
+                    if (!this.form.name.trim()) {
+                        this.$message({
+                            message: '请输入您的名字',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+
+                    this.loading = true;
+
                     // 创建一个表单元素以提交数据
                     const form = document.createElement('form');
                     form.method = 'post';
                     form.action = '/main';
-                    
+
                     // 创建一个隐藏的输入元素存储name数据
                     const input = document.createElement('input');
                     input.type = 'hidden';
@@ -79,4 +279,5 @@
         });
     </script>
 </body>
+
 </html>

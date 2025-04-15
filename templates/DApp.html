@@ -1,117 +1,231 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>存储合约界面</title>
+    <title>区块链智能合约体验平台</title>
     <script src="/static/web3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #45a049;
-            --background-color: #f0f2f5;
-            --text-color: #333;
-            --card-background: #ffffff;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a2a3a 100%);
+            color: var(--light-color);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .chain {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(10px) translateX(-15px);
+            }
+
+            75% {
+                transform: translateY(-15px) translateX(-8px);
+            }
         }
 
         .container {
-            background: var(--card-background);
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
             width: 90%;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
         .container:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
-            color: var(--primary-color);
+            color: white;
             text-align: center;
             margin-bottom: 1.5rem;
             font-size: 2rem;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+            width: 100%;
         }
 
-        h2 {
-            color: var(--text-color);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
         }
 
         .section {
             margin-bottom: 1.5rem;
-            padding: 1rem;
-            background-color: #f9f9f9;
-            border-radius: 10px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .section:hover {
-            background-color: #f0f0f0;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
         }
 
-        button, input[type="submit"] {
-            background-color: var(--primary-color);
+        h2 {
             color: white;
-            padding: 0.7rem 1.2rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        button,
+        input[type="submit"] {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 1.2rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 0.8rem;
         }
 
-        button:hover, input[type="submit"]:hover {
-            background-color: var(--secondary-color);
+        button i,
+        input[type="submit"] i {
+            margin-right: 0.5rem;
+        }
+
+        button:hover,
+        input[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #2980b9, #27ae60);
         }
 
         input[type="number"] {
             width: 100%;
-            padding: 0.7rem;
-            margin: 0.5rem 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            background-color: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 1rem;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .button-container {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             margin-top: 1.5rem;
+            gap: 1rem;
         }
 
         .button-container form {
-            margin: 0 0.5rem;
+            flex: 1;
         }
 
-        #walletAddress, #storedValue {
+        #walletAddress,
+        #storedValue {
             word-break: break-all;
             font-size: 0.9rem;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .connected {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .not-connected {
+            color: #e74c3c;
         }
 
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -119,7 +233,49 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .info-box {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--primary-color);
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.85rem;
+        }
+
+        .action-result {
+            display: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-top: 0.8rem;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 480px) {
@@ -135,49 +291,123 @@
                 font-size: 1rem;
             }
 
-            button, input[type="submit"] {
+            button,
+            input[type="submit"] {
                 padding: 0.6rem 1rem;
                 font-size: 0.9rem;
             }
         }
+
+        /* 添加滚动相关样式 */
+        html,
+        body {
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        @media (max-height: 800px) {
+            body {
+                align-items: flex-start;
+            }
+
+            .container {
+                margin: 2rem 0;
+            }
+        }
+
+        /* 增强可读性的样式 */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 550px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            p,
+            .info-box,
+            input,
+            button {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
+
 <body>
+    <div class="background-animation" id="chainAnimation"></div>
+
     <div class="container">
-        <h1>存储合约界面</h1>
-        
+        <h1><i class="fas fa-cubes"></i> 智能合约交互</h1>
+
         <div class="section">
-            <h2>连接钱包</h2>
-            <button id="connectButton">连接钱包</button>
-            <p id="walletAddress">未连接</p>
+            <h2><i class="fas fa-wallet"></i> 连接钱包</h2>
+            <div class="info-box">
+                通过连接MetaMask钱包，您可以与区块链上的智能合约进行交互。
+            </div>
+            <button id="connectButton"><i class="fas fa-plug"></i> 连接钱包</button>
+            <p id="walletAddress" class="not-connected">未连接</p>
         </div>
 
         <div class="section">
-            <h2>存储值</h2>
+            <h2><i class="fas fa-upload"></i> 存储值</h2>
+            <div class="info-box">
+                在此智能合约中存储一个数值。该操作会触发区块链交易，需要支付少量Gas费用。
+            </div>
             <input type="number" id="storeValue" placeholder="输入要存储的值">
-            <button onclick="storeValue()">存储</button>
+            <button onclick="storeValue()"><i class="fas fa-save"></i> 存储到区块链</button>
+            <div id="storeResult" class="action-result"></div>
         </div>
-        
+
         <div class="section">
-            <h2>查看存储的值</h2>
-            <button onclick="viewValue()">查看</button>
+            <h2><i class="fas fa-download"></i> 查看存储的值</h2>
+            <div class="info-box">
+                从区块链读取当前存储在智能合约中的值。此操作不消耗Gas费用。
+            </div>
+            <button onclick="viewValue()"><i class="fas fa-search"></i> 从区块链读取</button>
             <p id="storedValue">存储的值将在此显示</p>
         </div>
 
         <div class="button-container">
             <form action="/main" method="post">
-                <input type="submit" value="Main">
+                <button type="submit"><i class="fas fa-home"></i> 返回主页</button>
             </form>
             <form action="/" method="post">
-                <input type="submit" value="Login">
+                <button type="submit" style="background: rgba(255, 255, 255, 0.1);"><i class="fas fa-sign-out-alt"></i>
+                    退出</button>
             </form>
         </div>
     </div>
-    
+
     <script>
         let accounts = [];
         let isRequestPending = false;
 
+        // 创建背景动画
+        function createChainElements() {
+            const container = document.getElementById('chainAnimation');
+            const count = 15;
+
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 80 + 20;
+                const chain = document.createElement('div');
+                chain.classList.add('chain');
+                chain.style.width = `${size}px`;
+                chain.style.height = `${size}px`;
+                chain.style.left = `${Math.random() * 100}%`;
+                chain.style.top = `${Math.random() * 100}%`;
+                chain.style.animationDelay = `${Math.random() * 5}s`;
+                chain.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                container.appendChild(chain);
+            }
+        }
+
+        // 初始化Web3
         if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
         } else {
@@ -186,7 +416,7 @@
 
         const abi = [
             {
-                "inputs": [{"internalType": "uint256","name": "num","type": "uint256"}],
+                "inputs": [{ "internalType": "uint256", "name": "num", "type": "uint256" }],
                 "name": "store",
                 "outputs": [],
                 "stateMutability": "nonpayable",
@@ -195,7 +425,7 @@
             {
                 "inputs": [],
                 "name": "view_money",
-                "outputs": [{"internalType": "uint256","name": "","type": "uint256"}],
+                "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
                 "stateMutability": "view",
                 "type": "function"
             }
@@ -205,8 +435,10 @@
         const contract = new web3.eth.Contract(abi, address);
 
         function showLoading(button) {
-            button.innerHTML += '<span class="loading"></span>';
+            const originalText = button.innerHTML;
+            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 处理中...`;
             button.disabled = true;
+            return originalText;
         }
 
         function hideLoading(button, originalText) {
@@ -214,26 +446,45 @@
             button.disabled = false;
         }
 
+        function showResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `action-result ${isSuccess ? 'success' : 'error'}`;
+            element.style.display = 'block';
+
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
         async function connectWallet() {
             if (isRequestPending) return;
             isRequestPending = true;
             const button = document.getElementById('connectButton');
-            showLoading(button);
+            const originalText = showLoading(button);
 
             if (window.ethereum) {
                 try {
                     accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                    document.getElementById('walletAddress').innerText = `已连接: ${accounts[0]}`;
+                    const walletElement = document.getElementById('walletAddress');
+                    walletElement.innerText = `已连接: ${accounts[0]}`;
+                    walletElement.className = 'connected';
+
+                    // 检测网络状态
+                    const chainId = await ethereum.request({ method: 'eth_chainId' });
+                    console.log("当前连接的网络ID:", chainId);
+
                 } catch (error) {
                     console.error("连接钱包失败:", error);
+                    showResult('walletAddress', '连接失败: ' + (error.message || '未知错误'), false);
                 } finally {
                     isRequestPending = false;
-                    hideLoading(button, '连接钱包');
+                    hideLoading(button, originalText);
                 }
             } else {
-                alert("请安装MetaMask!");
+                showResult('walletAddress', '请安装MetaMask钱包后再尝试连接', false);
                 isRequestPending = false;
-                hideLoading(button, '连接钱包');
+                hideLoading(button, originalText);
             }
         }
 
@@ -241,48 +492,79 @@
             if (isRequestPending) return;
             isRequestPending = true;
             const button = event.target;
-            showLoading(button);
+            const originalText = showLoading(button);
 
             const value = document.getElementById('storeValue').value;
-            if (accounts.length == 0) {
-                alert('请先连接钱包');
+            if (!value || isNaN(parseInt(value))) {
+                showResult('storeResult', '请输入有效的数值', false);
                 isRequestPending = false;
-                hideLoading(button, '存储');
+                hideLoading(button, originalText);
                 return;
             }
-            contract.methods.store(value).send({ from: accounts[0] })
-                .on('receipt', function(receipt) {
-                    alert('值存储成功');
-                    isRequestPending = false;
-                    hideLoading(button, '存储');
-                })
-                .on('error', function(error) {
-                    console.error(error);
-                    alert('存储值时发生错误');
-                    isRequestPending = false;
-                    hideLoading(button, '存储');
-                });
+
+            if (accounts.length == 0) {
+                showResult('storeResult', '请先连接钱包', false);
+                isRequestPending = false;
+                hideLoading(button, originalText);
+                return;
+            }
+
+            try {
+                contract.methods.store(value).send({ from: accounts[0] })
+                    .on('transactionHash', function (hash) {
+                        console.log('交易哈希:', hash);
+                    })
+                    .on('receipt', function (receipt) {
+                        showResult('storeResult', '值存储成功！交易已确认', true);
+                        isRequestPending = false;
+                        hideLoading(button, originalText);
+                    })
+                    .on('error', function (error) {
+                        console.error(error);
+                        showResult('storeResult', '存储值时发生错误: ' + (error.message || '未知错误'), false);
+                        isRequestPending = false;
+                        hideLoading(button, originalText);
+                    });
+            } catch (error) {
+                console.error(error);
+                showResult('storeResult', '发送交易失败: ' + (error.message || '未知错误'), false);
+                isRequestPending = false;
+                hideLoading(button, originalText);
+            }
         }
 
         async function viewValue() {
             if (isRequestPending) return;
             isRequestPending = true;
             const button = event.target;
-            showLoading(button);
+            const originalText = showLoading(button);
 
             try {
                 const value = await contract.methods.view_money().call();
-                document.getElementById('storedValue').innerText = value;
+                document.getElementById('storedValue').innerHTML = `<strong>当前存储的值:</strong> ${value} <i class="fas fa-check-circle" style="color: var(--secondary-color);"></i>`;
             } catch (error) {
                 console.error(error);
-                alert('查看值时发生错误');
+                document.getElementById('storedValue').innerHTML = `<span style="color: #e74c3c;"><i class="fas fa-exclamation-circle"></i> 查询失败: ${error.message || '未知错误'}</span>`;
             } finally {
                 isRequestPending = false;
-                hideLoading(button, '查看');
+                hideLoading(button, originalText);
             }
         }
 
-        document.getElementById('connectButton').addEventListener('click', connectWallet);
+        // 初始化页面
+        window.onload = function () {
+            createChainElements();
+            document.getElementById('connectButton').addEventListener('click', connectWallet);
+
+            // 检测是否已经连接了钱包
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                accounts = [window.ethereum.selectedAddress];
+                const walletElement = document.getElementById('walletAddress');
+                walletElement.innerText = `已连接: ${accounts[0]}`;
+                walletElement.className = 'connected';
+            }
+        }
     </script>
 </body>
+
 </html>

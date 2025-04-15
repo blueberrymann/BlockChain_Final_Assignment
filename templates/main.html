@@ -1,77 +1,294 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenAI and Web3</title>
+    <title>区块链智能合约体验平台</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a2a3a 100%);
+            color: var(--light-color);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
+            overflow: hidden;
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
+
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
         }
-        h2 {
-            color: #4CAF50;
+
+        .chain {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
         }
-        form {
-            margin: 20px 0;
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(10px) translateX(-15px);
+            }
+
+            75% {
+                transform: translateY(-15px) translateX(-8px);
+            }
         }
-        input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
         }
-        input[type="submit"] {
-            background-color: #4CAF50;
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome {
             color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px 0;
-            width: calc(100% - 20px);
-            box-sizing: border-box;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
+
+        .welcome span {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .card-title i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            padding-left: 2.5rem;
+            background-color: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 0.8rem;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        button,
+        input[type="submit"] {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button i,
+        input[type="submit"] i {
+            margin-right: 0.5rem;
+        }
+
+        button:hover,
         input[type="submit"]:hover {
-            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-tips {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 3px solid var(--primary-color);
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .question-tips p {
+            margin: 0.3rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-tips i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .question-tips strong {
+            color: var(--accent-color);
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h2>Hi, {{r}}</h2>
+    <div class="background-animation" id="chainAnimation"></div>
 
-        <form action="/genAI" method="post">
-            <p>Question:</p>
-            <p><input type="text" name="q"></p>
-            <p><input type="submit" value="Enter"></p>
-        </form>
+    <div id="app" class="container">
+        <h2 class="welcome">您好, <span>{{r}}</span></h2>
 
-        <form action="/DApp" method="post">
-            <p><input type="submit" value="Decentralized APP"></p>
-        </form>
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-robot"></i> AI 智能问答
+            </div>
+
+            <div class="question-tips">
+                <p><i class="fas fa-info-circle"></i> 您可以询问关于<strong>区块链</strong>的问题，例如：</p>
+                <p><i class="fas fa-caret-right"></i> 什么是智能合约？</p>
+                <p><i class="fas fa-caret-right"></i> 区块链如何保证安全？</p>
+                <p><i class="fas fa-caret-right"></i> 以太坊和比特币有什么区别？</p>
+            </div>
+
+            <form action="/genAI" method="post">
+                <div class="input-group">
+                    <i class="fas fa-question-circle input-icon"></i>
+                    <input type="text" name="q" placeholder="输入您的问题">
+                </div>
+                <button type="submit">
+                    <i class="fas fa-paper-plane"></i> 提交问题
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-cubes"></i> 区块链应用
+            </div>
+            <form action="/DApp" method="post">
+                <button type="submit">
+                    <i class="fas fa-link"></i> 进入去中心化应用
+                </button>
+            </form>
+        </div>
 
         <form action="/" method="post">
-            <p><input type="submit" value="Login Page"></p>
+            <button type="submit" style="background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7);">
+                <i class="fas fa-sign-out-alt"></i> 返回登录页
+            </button>
         </form>
     </div>
+
+    <script>
+        // 创建背景动画
+        function createChainElements() {
+            const container = document.getElementById('chainAnimation');
+            const count = 15;
+
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 80 + 20;
+                const chain = document.createElement('div');
+                chain.classList.add('chain');
+                chain.style.width = `${size}px`;
+                chain.style.height = `${size}px`;
+                chain.style.left = `${Math.random() * 100}%`;
+                chain.style.top = `${Math.random() * 100}%`;
+                chain.style.animationDelay = `${Math.random() * 5}s`;
+                chain.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                container.appendChild(chain);
+            }
+        }
+
+        // 初始化页面
+        window.onload = function () {
+            createChainElements();
+        }
+    </script>
 </body>
+
 </html>
